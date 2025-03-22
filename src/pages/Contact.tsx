@@ -34,32 +34,52 @@ const contactInfo = [
 export default function Contact() {
   const [ref, inView] = useInView({ triggerOnce: true, threshold: 0.1 });
   const [formStatus, setFormStatus] = useState<'idle' | 'sending' | 'success' | 'error'>('idle');
+  const [errorMessage, setErrorMessage] = useState<string>('');
   const form = useRef<HTMLFormElement>(null);
 
   useEffect(() => {
-    // Initialize EmailJS
-    emailjs.init(import.meta.env.VITE_EMAILJS_PUBLIC_KEY);
+    // Initialize EmailJS with public key
+    const initEmailJS = async () => {
+      try {
+        await emailjs.init(import.meta.env.VITE_EMAILJS_PUBLIC_KEY);
+        console.log('EmailJS initialized successfully');
+      } catch (error) {
+        console.error('EmailJS initialization error:', error);
+        setErrorMessage('Error initializing email service');
+      }
+    };
+
+    initEmailJS();
   }, []);
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setFormStatus('sending');
+    setErrorMessage('');
 
     try {
-      if (!form.current) return;
+      if (!form.current) {
+        throw new Error('Form reference is not available');
+      }
 
-      await emailjs.sendForm(
+      console.log('Sending email with EmailJS...');
+      console.log('Service ID:', import.meta.env.VITE_EMAILJS_SERVICE_ID);
+      console.log('Template ID:', import.meta.env.VITE_EMAILJS_TEMPLATE_ID);
+
+      const response = await emailjs.sendForm(
         import.meta.env.VITE_EMAILJS_SERVICE_ID,
         import.meta.env.VITE_EMAILJS_TEMPLATE_ID,
         form.current,
         import.meta.env.VITE_EMAILJS_PUBLIC_KEY
       );
-      
+
+      console.log('SUCCESS!', response.status, response.text);
       setFormStatus('success');
       form.current.reset();
-    } catch (error) {
-      console.error('Error sending email:', error);
+    } catch (error: any) {
+      console.error('FAILED...', error);
       setFormStatus('error');
+      setErrorMessage(error.message || 'Error al enviar el mensaje. Por favor, intenta nuevamente.');
     }
   };
 
@@ -235,7 +255,7 @@ export default function Contact() {
                 
                 {formStatus === 'error' && (
                   <p className="mt-4 text-center text-sm text-red-600 dark:text-red-400">
-                    Hubo un error al enviar el mensaje. Por favor, intenta nuevamente.
+                    {errorMessage || 'Hubo un error al enviar el mensaje. Por favor, intenta nuevamente.'}
                   </p>
                 )}
               </div>
