@@ -1,12 +1,29 @@
+# Allow all crawlers
 User-agent: *
 Allow: /
-Sitemap: https://fngeodrillingrd.com/sitemap.xml
 
-# Disallow backup files
+# Important pages
+Allow: /about
+Allow: /services
+Allow: /gallery
+Allow: /contact
+
+# Sitemap location
+Sitemap: https://fngeodrilling.com/sitemap.xml
+
+# Disallow backup files and temporary content
 Disallow: /*.bak$
 Disallow: /*.old$
+Disallow: /*.tmp$
+Disallow: /*.temp$
 
 # Disallow admin and private areas
 Disallow: /admin/
 Disallow: /private/
-Disallow: /temp/ 
+Disallow: /temp/
+Disallow: /draft/
+Disallow: /_next/static/
+Disallow: /*?*
+
+# Crawl-delay directive
+Crawl-delay: 1 

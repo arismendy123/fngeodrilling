@@ -1,13 +1,22 @@
 const express = require('express');
+const path = require('path');
+const compression = require('compression');
 const cors = require('cors');
 const nodemailer = require('nodemailer');
 require('dotenv').config();
 
 const app = express();
+const PORT = process.env.PORT || 3000;
 
 // Middleware
 app.use(cors());
 app.use(express.json());
+
+// Enable gzip compression
+app.use(compression());
+
+// Serve static files
+app.use(express.static(path.join(__dirname, 'dist')));
 
 // Create mail transporter
 const transporter = nodemailer.createTransport({
@@ -45,7 +54,11 @@ app.post('/api/contact', async (req, res) => {
   }
 });
 
-const PORT = process.env.PORT || 3001;
+// Handle all routes for client-side routing
+app.get('*', (req, res) => {
+  res.sendFile(path.join(__dirname, 'dist', 'index.html'));
+});
+
 app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
+  console.log(`Server is running on port ${PORT}`);
 }); 

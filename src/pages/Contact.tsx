@@ -1,8 +1,9 @@
 import { motion } from 'framer-motion';
 import { useInView } from 'react-intersection-observer';
 import { EnvelopeIcon, PhoneIcon, MapPinIcon } from '@heroicons/react/24/outline';
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import emailjs from '@emailjs/browser';
+import { Link } from 'react-router-dom';
 
 const fadeIn = {
   hidden: { opacity: 0, y: 20 },
@@ -35,20 +36,27 @@ export default function Contact() {
   const [formStatus, setFormStatus] = useState<'idle' | 'sending' | 'success' | 'error'>('idle');
   const form = useRef<HTMLFormElement>(null);
 
+  useEffect(() => {
+    // Initialize EmailJS
+    emailjs.init(import.meta.env.VITE_EMAILJS_PUBLIC_KEY);
+  }, []);
+
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setFormStatus('sending');
 
     try {
+      if (!form.current) return;
+
       await emailjs.sendForm(
         import.meta.env.VITE_EMAILJS_SERVICE_ID,
         import.meta.env.VITE_EMAILJS_TEMPLATE_ID,
-        form.current!,
+        form.current,
         import.meta.env.VITE_EMAILJS_PUBLIC_KEY
       );
       
       setFormStatus('success');
-      form.current?.reset();
+      form.current.reset();
     } catch (error) {
       console.error('Error sending email:', error);
       setFormStatus('error');
@@ -79,7 +87,8 @@ export default function Contact() {
               <p className="mt-6 text-lg leading-8 text-dark-600 dark:text-dark-300">
                 ¿Tienes preguntas? Nos encantaría escucharte. Envíanos un mensaje y te responderemos lo antes posible.
               </p>
-              <dl className="mt-10 space-y-6">
+              
+              <dl className="mt-12 space-y-6">
                 {contactInfo.map((item) => (
                   <motion.div
                     key={item.name}
@@ -120,7 +129,7 @@ export default function Contact() {
               <div className="grid gap-6 sm:grid-cols-2">
                 <div>
                   <label
-                    htmlFor="first-name"
+                    htmlFor="user_name"
                     className="block text-sm font-medium text-dark-900 dark:text-white"
                   >
                     Nombre
@@ -129,9 +138,8 @@ export default function Contact() {
                     <input
                       type="text"
                       name="user_name"
-                      id="first-name"
+                      id="user_name"
                       required
-                      autoComplete="given-name"
                       className="block w-full rounded-lg border-0 bg-dark-50 px-4 py-3 text-dark-900 shadow-sm ring-1 ring-inset ring-dark-200 placeholder:text-dark-400 focus:ring-2 focus:ring-inset focus:ring-primary-600 dark:bg-dark-700 dark:text-white dark:ring-dark-600 dark:placeholder:text-dark-400 dark:focus:ring-primary-500 sm:text-sm"
                     />
                   </div>
@@ -139,7 +147,7 @@ export default function Contact() {
 
                 <div>
                   <label
-                    htmlFor="last-name"
+                    htmlFor="user_lastname"
                     className="block text-sm font-medium text-dark-900 dark:text-white"
                   >
                     Apellido
@@ -148,9 +156,8 @@ export default function Contact() {
                     <input
                       type="text"
                       name="user_lastname"
-                      id="last-name"
+                      id="user_lastname"
                       required
-                      autoComplete="family-name"
                       className="block w-full rounded-lg border-0 bg-dark-50 px-4 py-3 text-dark-900 shadow-sm ring-1 ring-inset ring-dark-200 placeholder:text-dark-400 focus:ring-2 focus:ring-inset focus:ring-primary-600 dark:bg-dark-700 dark:text-white dark:ring-dark-600 dark:placeholder:text-dark-400 dark:focus:ring-primary-500 sm:text-sm"
                     />
                   </div>
@@ -158,7 +165,7 @@ export default function Contact() {
 
                 <div className="sm:col-span-2">
                   <label
-                    htmlFor="email"
+                    htmlFor="user_email"
                     className="block text-sm font-medium text-dark-900 dark:text-white"
                   >
                     Correo electrónico
@@ -167,9 +174,8 @@ export default function Contact() {
                     <input
                       type="email"
                       name="user_email"
-                      id="email"
+                      id="user_email"
                       required
-                      autoComplete="email"
                       className="block w-full rounded-lg border-0 bg-dark-50 px-4 py-3 text-dark-900 shadow-sm ring-1 ring-inset ring-dark-200 placeholder:text-dark-400 focus:ring-2 focus:ring-inset focus:ring-primary-600 dark:bg-dark-700 dark:text-white dark:ring-dark-600 dark:placeholder:text-dark-400 dark:focus:ring-primary-500 sm:text-sm"
                     />
                   </div>
@@ -177,7 +183,7 @@ export default function Contact() {
 
                 <div className="sm:col-span-2">
                   <label
-                    htmlFor="phone"
+                    htmlFor="user_phone"
                     className="block text-sm font-medium text-dark-900 dark:text-white"
                   >
                     Teléfono
@@ -186,9 +192,8 @@ export default function Contact() {
                     <input
                       type="tel"
                       name="user_phone"
-                      id="phone"
+                      id="user_phone"
                       required
-                      autoComplete="tel"
                       className="block w-full rounded-lg border-0 bg-dark-50 px-4 py-3 text-dark-900 shadow-sm ring-1 ring-inset ring-dark-200 placeholder:text-dark-400 focus:ring-2 focus:ring-inset focus:ring-primary-600 dark:bg-dark-700 dark:text-white dark:ring-dark-600 dark:placeholder:text-dark-400 dark:focus:ring-primary-500 sm:text-sm"
                     />
                   </div>

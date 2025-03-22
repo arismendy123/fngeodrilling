@@ -9,6 +9,7 @@ import {
   ShieldCheckIcon,
   ChevronRightIcon,
 } from '@heroicons/react/24/outline';
+import { useEffect, useState } from 'react';
 
 const values = [
   {
@@ -84,19 +85,42 @@ const seoMetadata = {
 };
 
 export default function About() {
+  const [imageLoaded, setImageLoaded] = useState(false);
+
+  useEffect(() => {
+    const img = new Image();
+    img.src = "/images/dude working.jpeg";
+    img.onload = () => setImageLoaded(true);
+    return () => {
+      img.onload = null;
+    };
+  }, []);
+
   return (
-    <div className="space-y-24">
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      className="space-y-24"
+    >
       {/* Hero section */}
       <div className="relative min-h-[60vh] overflow-hidden">
-        <div className="absolute inset-0 -z-10">
-          <img
-            src="/images/dude working.jpeg"
-            alt=""
-            className="h-full w-full object-cover opacity-10 dark:opacity-5"
-          />
-          <div className="absolute inset-0 bg-gradient-to-br from-primary-600/20 via-primary-400/10 to-transparent dark:from-primary-900/30 dark:via-primary-800/20" />
+        <div className="absolute inset-0 -z-10 bg-gradient-to-br from-primary-900/90 via-primary-800/80 to-dark-900/90 dark:from-dark-950 dark:via-primary-950/50 dark:to-dark-900">
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: imageLoaded ? 1 : 0 }}
+            transition={{ duration: 0.5 }}
+            className="absolute inset-0 mix-blend-overlay"
+          >
+            <img
+              src="/images/dude working.jpeg"
+              alt=""
+              className="h-full w-full object-cover"
+            />
+          </motion.div>
+          <div className="absolute inset-0 bg-gradient-to-br from-primary-600/30 via-primary-500/20 to-transparent dark:from-primary-950/40 dark:via-primary-900/30 dark:to-transparent" />
         </div>
-        <div className="container mx-auto px-4 py-24 sm:py-32">
+        <div className="container relative mx-auto px-4 py-24 sm:py-32">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -299,6 +323,6 @@ export default function About() {
           </motion.div>
         </div>
       </div>
-    </div>
+    </motion.div>
   );
 } 
