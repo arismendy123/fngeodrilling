@@ -41,6 +41,7 @@ export default function Contact() {
     // Initialize EmailJS with public key
     const initEmailJS = async () => {
       try {
+        console.log('Initializing EmailJS with public key:', import.meta.env.VITE_EMAILJS_PUBLIC_KEY);
         await emailjs.init(import.meta.env.VITE_EMAILJS_PUBLIC_KEY);
         console.log('EmailJS initialized successfully');
       } catch (error) {
@@ -85,11 +86,6 @@ export default function Contact() {
 
   return (
     <div className="relative min-h-screen bg-white dark:bg-dark-900">
-      {/* Background gradient */}
-      <div className="absolute inset-0 -z-10">
-        <div className="h-full w-full bg-gradient-to-br from-primary-600/5 via-primary-400/5 to-transparent dark:from-primary-900/20 dark:via-primary-800/10" />
-      </div>
-
       <div className="container mx-auto px-4 py-16 sm:py-24">
         <div className="grid gap-16 lg:grid-cols-2">
           {/* Contact Information */}
@@ -263,25 +259,6 @@ export default function Contact() {
           </motion.div>
         </div>
       </div>
-
-      {/* Map Section */}
-      <motion.div
-        initial="hidden"
-        animate={inView ? "visible" : "hidden"}
-        variants={fadeIn}
-        transition={{ delay: 0.4 }}
-        className="container mx-auto px-4 pb-16"
-      >
-        <div className="overflow-hidden rounded-2xl shadow-lg">
-          <iframe
-            title="Ubicación de la Oficina"
-            src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d121968.85330282553!2d-69.98959569059431!3d18.481679563407534!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x8eaf89f1107ea5ab%3A0xd6c587b82715c164!2sSanto%20Domingo%2C%20Dominican%20Republic!5e0!3m2!1sen!2sus!4v1647128498802!5m2!1sen!2sus"
-            className="aspect-video w-full"
-            allowFullScreen
-            loading="lazy"
-          />
-        </div>
-      </motion.div>
     </div>
   );
 } 
